@@ -1,33 +1,39 @@
 package org.skypro.skyshop.controller;
 
-import org.skypro.skyshop.model.basket.UserBasket;
-import org.skypro.skyshop.service.BasketService;
+import org.skypro.skyshop.model.article.Article;
+import org.skypro.skyshop.model.product.Product;
+import org.skypro.skyshop.model.search.SearchResult;
+import org.skypro.skyshop.service.SearchService;
+import org.skypro.skyshop.service.StorageService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
+import java.util.Collection;
 
 @RestController
-@RequestMapping("/shop")
 public class ShopController {
 
-    private final BasketService basketService;
+    private final StorageService storageService;
+    private final SearchService searchService;
 
-    // Внедрение BasketService через конструктор
-    public ShopController(BasketService basketService) {
-        this.basketService = basketService;
+    public ShopController(StorageService storageService, SearchService searchService) {
+        this.storageService = storageService;
+        this.searchService = searchService;
     }
 
-    @GetMapping("/basket/{id}")
-    public String addProduct(@PathVariable("id") UUID id) {
-        basketService.addProduct(id);
-        return "Продукт успешно добавлен";
+    @GetMapping("/products")
+    public Collection<Product> getAllProducts() {
+        return storageService.getAllProducts();
     }
 
-    @GetMapping("/basket")
-    public UserBasket getUserBasket() {
-        return basketService.getUserBasket();
+    @GetMapping("/articles")
+    public Collection<Article> getAllArticles() {
+        return storageService.getAllArticles();
+    }
+
+    @GetMapping("/search")
+    public Collection<SearchResult> search(@RequestParam String pattern) {
+        return searchService.search(pattern);
     }
 }
