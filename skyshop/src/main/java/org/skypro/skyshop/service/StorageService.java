@@ -1,7 +1,7 @@
 package org.skypro.skyshop.service;
 
-import org.skypro.skyshop.model.product.Product;
 import org.skypro.skyshop.model.article.Article;
+import org.skypro.skyshop.model.product.Product;
 import org.skypro.skyshop.model.search.Searchable;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +9,7 @@ import java.util.*;
 
 @Service
 public class StorageService {
+
     private final Map<UUID, Product> products;
     private final Map<UUID, Article> articles;
 
@@ -34,53 +35,58 @@ public class StorageService {
     }
 
     private void initTestData() {
-        // Продукт 1: Ноутбук
-        UUID laptopId = UUID.randomUUID();
-        products.put(laptopId, new Product(laptopId, "Ноутбук") {
+        // ======== Продукты (анонимные классы) ========
+        Product phone = new Product(UUID.randomUUID(), "Телефон") {
             @Override
-            public double getPrice() {
-                return 89999.99;
+            public boolean isSpecial() {
+                return false; // обычный товар
             }
 
+            @Override
+            public double getPrice() {
+                return 15000; // цена в руб.
+            }
+        };
+
+        Product laptop = new Product(UUID.randomUUID(), "Ноутбук") {
+            @Override
+            public boolean isSpecial() {
+                return true; // допустим, специальное предложение
+            }
+
+            @Override
+            public double getPrice() {
+                return 65000;
+            }
+        };
+
+        Product yogurt = new Product(UUID.randomUUID(), "Йогурт") {
             @Override
             public boolean isSpecial() {
                 return false;
             }
-        });
 
-        // Продукт 2: Йогурт
-        UUID yogurtId = UUID.randomUUID();
-        products.put(yogurtId, new Product(yogurtId, "Йогурт") {
             @Override
             public double getPrice() {
-                return 89.50;
+                return 80;
             }
+        };
 
-            @Override
-            public boolean isSpecial() {
-                return true;
-            }
-        });
+        // ======== Статьи ========
+        Article article1 = new Article(UUID.randomUUID(), "Гаджеты 2025", "electronics");
+        Article article2 = new Article(UUID.randomUUID(), "Питание и здоровье", "food");
 
-        // Продукт 3: Книга
-        UUID bookId = UUID.randomUUID();
-        products.put(bookId, new Product(bookId, "Книга 'Java для начинающих'") {
-            @Override
-            public double getPrice() {
-                return 1200.00;
-            }
+        // ======== Добавляем в коллекции ========
+        products.put(phone.getId(), phone);
+        products.put(laptop.getId(), laptop);
+        products.put(yogurt.getId(), yogurt);
 
-            @Override
-            public boolean isSpecial() {
-                return false;
-            }
-        });
-
-        // Статья
-        UUID articleId = UUID.randomUUID();
-        articles.put(articleId, new Article(articleId, "Новости технологий", "ИИ научился писать код..."));
+        articles.put(article1.getId(), article1);
+        articles.put(article2.getId(), article2);
     }
     public Optional<Product> getProductById(UUID id) {
         return Optional.ofNullable(products.get(id));
     }
+
+
 }
